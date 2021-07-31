@@ -3,7 +3,7 @@
 
 library(stats)
 
-#Προσομοίωση δεδομένων AR(1) με iid σφάλματα U(-0.5,0.5), εκτίμηση μοντέλου, υπολογισμός υπολοίπων
+#Simulation of an AR(1) model with iid error distributed as U(-0.5,0.5) estimation of the model parameters and errors
 
 x<-arima.sim(model=list(ar=.75), n=1000, rand.gen = runif, min = -0.5, max = 0.5)
 
@@ -24,12 +24,12 @@ error<-rep(0,1000)
 
 
 for (j in 1:1000){
-#Δημιουργία Bootstrap δείγματος
+#Bootstrap sample computation
 boot_res<-sample(e,1002,replace=TRUE)
 
 
 
-#Καινούριο δείγμα (Χ,Υ*)
+#new sample (Χ,Υ*)
 simul_sample<-rep(0,1002)
 
 simul_sample[1]<-x[1]
@@ -39,13 +39,13 @@ for (i in 2:1002){
 }
 
 
-#Κατασκευή νέου μοντέλου στα κανούρια δεδομένα
+#Building the new model using the newly generated data.
 simul_sample
 
 simul_model<-arima(simul_sample[c(1,1000)] , order = c(1, 0, 0))
 
 
-#Πρόβλεψη καινούριου μοντέλου
+#Prediction with the new model for 2 steps ahead
 pred<-predict(simul_model,n.ahead = 2)
 
 pred$pred[2]
@@ -55,7 +55,7 @@ pred<-pred$pred[2]
 pred
 
 
-#Εκτίμηση σφάλματος
+# Estimation of prediction error 
 error[j]<-simul_sample[1002]-pred
 }
 
